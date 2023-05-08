@@ -1,0 +1,15 @@
+type XS0101{
+  xh : ID!
+  xm:String!
+  xbm:String!
+  csrq:String
+  sfzjh:String
+}
+
+#根操作查询数据
+type Query {
+    allXS0101:[XS0101]!
+    xs0101ByXh(xh:ID):XS0101
+    xs0101Count:Int
+    xs0101(pageIndex:Int!,pageSize:Int!):[XS0101]!
+}
