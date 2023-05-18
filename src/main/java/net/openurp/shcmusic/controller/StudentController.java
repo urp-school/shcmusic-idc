@@ -1,6 +1,7 @@
 package net.openurp.shcmusic.controller;
 
 import net.openurp.shcmusic.dao.StudentDao;
+import net.openurp.shcmusic.model.Count;
 import net.openurp.shcmusic.model.Student;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -17,8 +18,8 @@ public class StudentController {
   }
 
   @QueryMapping(name = "student_count")
-  public int count() {
-    return (int) this.studentDao.count();
+  public Count count() {
+    return new Count((int) this.studentDao.count());
   }
 
   @QueryMapping(name = "student_find_by_code")

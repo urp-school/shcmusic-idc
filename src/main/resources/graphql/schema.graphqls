@@ -19,9 +19,12 @@ type Student{
   idcard:String
 }
 
+type Count{
+   total:Int!
+}
 #根操作查询数据
 type Query {
     student_find_by_code(code:String):Student
-    student_count:Int
+    student_count:Count
     student_limit(pageIndex:Int!,pageSize:Int!):[Student]!
 }
