@@ -1,15 +1,27 @@
-type XS0101{
-  xh : ID!
-  xm:String!
-  xbm:String!
-  csrq:String
-  sfzjh:String
+type Student{
+  id : ID!
+  code:String!
+  name:String!
+  gradeCode:String!
+  eduTypeName:String!
+  levelName:String!
+  departName:String!
+  majorName:String!
+  directionName:String
+  duration:Float!
+  stdTypeName:String!
+  studyTypeName:String
+  statusName:String!
+  advisorName:String
+  genderName:String!
+  nationName:String
+  idTypeName:String
+  idcard:String
 }
 
 #根操作查询数据
 type Query {
-    allXS0101:[XS0101]!
-    xs0101ByXh(xh:ID):XS0101
-    xs0101Count:Int
-    xs0101(pageIndex:Int!,pageSize:Int!):[XS0101]!
+    student_find_by_code(code:String):Student
+    student_count:Int
+    student_limit(pageIndex:Int!,pageSize:Int!):[Student]!
 }
