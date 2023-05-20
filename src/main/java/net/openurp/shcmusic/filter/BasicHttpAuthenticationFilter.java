@@ -1,6 +1,5 @@
 package net.openurp.shcmusic.filter;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,17 +12,17 @@ import java.util.Base64;
 @Configuration
 public class BasicHttpAuthenticationFilter implements Filter {
 
-  private String GRAPHQL_CLIENT;
-
-  private String GRAPHQL_SECRET;
+  private String key;
 
   protected FilterConfig filterConfig;
 
   private static final String HEADER = "BASIC";
 
   public final void init(FilterConfig filterConfig) throws ServletException {
-    GRAPHQL_CLIENT = EmsApp.Instance.getProperties().get("graphql.client");
-    GRAPHQL_SECRET = EmsApp.Instance.getProperties().get("graphql.secret");
+    var client = EmsApp.Instance.getProperties().get("graphql.client");
+    var secret = EmsApp.Instance.getProperties().get("graphql.secret");
+    String pattern = client + ":" + secret;
+    key = new String(Base64.getEncoder().encode(pattern.getBytes()));
     setFilterConfig(filterConfig);
   }
 
@@ -44,10 +43,8 @@ public class BasicHttpAuthenticationFilter implements Filter {
   }
 
   public static void main(String[] args) {
-    String client = "GnwUYDINt1raHKmhE96Q";
-    String secret = "7376979802290437E534E5A85D8CF8D38070DA7CA2A4763E";
-    String tenant = "shcmusic.edu.cn";
-//    String pattern = client + "@" + secret + ":" + tenant;
+    String client = "client";
+    String secret = "secret";
     String pattern = client + ":" + secret;
     String a = new String(Base64.getEncoder().encode(pattern.getBytes()));
     System.out.println(a);
@@ -55,6 +52,8 @@ public class BasicHttpAuthenticationFilter implements Filter {
 
 
   protected boolean isAccessAllowed(HttpServletRequest request, HttpServletResponse response) {
+    String uri = request.getRequestURI();
+    if (uri.equals("/graphiql")) return true;
     if (request.getRemoteAddr().equals("127.0.0.1") || request.getRemoteAddr().equals("localhost")) return true;
     String authorizationHeader = request.getHeader("Authorization");
     if (null == authorizationHeader) {
@@ -67,12 +66,7 @@ public class BasicHttpAuthenticationFilter implements Filter {
         basic = tempString.substring(tempString.indexOf("Basic") + 5).trim();
       }
     }
-    Base64.Decoder decoder = Base64.getDecoder();
-    String client = new String(decoder.decode(basic));
-    if (StringUtils.isNotEmpty(client) && StringUtils.isNotBlank(client)) {
-      return client.equals(GRAPHQL_CLIENT + ":" + GRAPHQL_SECRET);
-    }
-    return false;
+    return basic.equals(this.key);
   }
 
   protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
