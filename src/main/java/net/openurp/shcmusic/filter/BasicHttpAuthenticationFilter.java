@@ -57,6 +57,9 @@ public class BasicHttpAuthenticationFilter implements Filter {
   protected boolean isAccessAllowed(HttpServletRequest request, HttpServletResponse response) {
     if (request.getRemoteAddr().equals("127.0.0.1") || request.getRemoteAddr().equals("localhost")) return true;
     String authorizationHeader = request.getHeader("Authorization");
+    if (null == authorizationHeader) {
+      return false;
+    }
     String[] authorizations = authorizationHeader.split(",");
     String basic = "";
     for (String tempString : authorizations) {
